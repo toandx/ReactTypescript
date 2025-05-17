@@ -1,10 +1,10 @@
-import MyGraph from "../components/mygraph";
+import { Scatterplot } from "../components/graph/Scatterplot";
 
 function TestD3 ({data} : {data:number[]}) {
   
     return (
         <div>
-            <MyGraph name = "Toan" data={data}/>
+            <Scatterplot data={[{x:3,y:5},{x:2,y:2}]} width={700} height={400} />
         </div>
     )
 }
