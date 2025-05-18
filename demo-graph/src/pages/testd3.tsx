@@ -1,10 +1,22 @@
+import { Barplot } from "../components/graph/Barplot";
 import { Scatterplot } from "../components/graph/Scatterplot";
 
 function TestD3 ({data} : {data:number[]}) {
   
     return (
-        <div>
-            <Scatterplot data={[{x:3,y:5},{x:2,y:2}]} width={700} height={400} />
+        <div className="container-fluid vh-100 vw-100"> {/* height = 100% view height */}
+            <div className="row h-50"> {/* Height = 50% */}
+                <div className="col-6 bg-primary">
+                    <Scatterplot data={[{x:3,y:5},{x:2,y:2}]} width={700} height={400} />
+                </div>
+                <div className="col-6 bg-secondary">
+                    <Barplot data={[{name:'Toan', value: 9}, {name: 'Oanh',value: 12}]} width={700} height={400} />  
+                </div>
+            </div>
+            <div className="row h-50">
+                <div className="col-6 bg-success"></div>
+                <div className="col-6 bg-danger"></div>
+            </div>
         </div>
     )
 }
