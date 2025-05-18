@@ -27,7 +27,8 @@
     "@types/d3": "^7.4.3",
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.4",
-    "@types/react-dom": "^19.1.5"
+    "@types/react-dom": "^19.1.5",
+    "@types/react-table": "^7.7.20"
   },
   "scripts": {
     "start": "react-scripts start",
