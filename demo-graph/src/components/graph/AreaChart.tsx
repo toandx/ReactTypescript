@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import * as d3 from 'd3';
 
-const MARGIN = { top: 20, right: 20, bottom: 10, left: 10 };
+const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 };
 
 type DataPoint = { x: number; y: number };
 
@@ -10,7 +10,7 @@ type AreaChartProps = {
   height: number;
   data: DataPoint[];
 };
-
+// Learn how to zoom at https://d3-graph-gallery.com/graph/area_brushZoom.html
 export const AreaChart = ({ width, height, data }: AreaChartProps) => {
   // bounds = area inside the graph axis = calculated by substracting the margins
   const axesRef = useRef(null);
@@ -27,7 +27,7 @@ export const AreaChart = ({ width, height, data }: AreaChartProps) => {
   }, [data, height]);
 
   // X axis
-  const [xMin, xMax] = d3.extent(data, (d) => d.x);
+  const [xMin, xMax] = d3.extent(data, (d) => d.x); // Get min,max of array
   const xScale = useMemo(() => {
     return d3
       .scaleLinear()
