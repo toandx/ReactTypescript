@@ -23,7 +23,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
     .padding(BAR_PADDING);
 
   // Y axis
-  const max = d3.max(data.map((d) => d.value)) ?? 10;
+  const max = d3.max(data.map((d) => d.value)) ?? 10; // Get max value. If null | undefined -> 10
   const yScale = d3
     .scaleLinear()
     .domain([max * 1.2, 0])
