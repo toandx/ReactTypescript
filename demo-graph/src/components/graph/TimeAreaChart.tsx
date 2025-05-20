@@ -107,3 +107,7 @@ export const TimeAreaChart = ({ width, height, data }: AreaChartProps) => {
     </div>
   );
 };
+
+/* How to make interactive line to drag drop in Area Chart?
+1. Create transparent rect to listen event?
+*/
