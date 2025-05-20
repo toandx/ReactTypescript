@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 };
 
-type DataPoint = { x: number; y: number };
+type DataPoint = { time: Date; value: number };
 
 type AreaChartProps = {
   width: number;
@@ -11,27 +11,27 @@ type AreaChartProps = {
   data: DataPoint[];
 };
 // Learn how to zoom at https://d3-graph-gallery.com/graph/area_brushZoom.html
-export const AreaChart = ({ width, height, data }: AreaChartProps) => {
+export const TimeAreaChart = ({ width, height, data }: AreaChartProps) => {
   // bounds = area inside the graph axis = calculated by substracting the margins
   const axesRef = useRef(null);
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
   // Y axis
-  const [min, max] = d3.extent(data, (d) => d.y);
-  const yScale = useMemo(() => { // Cache value yScale, only recalculated if [data, height] update
+  const [minVal, maxVal] = d3.extent(data, (d) => d.value);
+  const yScale = useMemo(() => {
     return d3
       .scaleLinear()
-      .domain([0, max || 0])
+      .domain([0, maxVal || 0])
       .range([boundsHeight, 0]);
   }, [data, height]);
 
   // X axis
-  const [xMin, xMax] = d3.extent(data, (d) => d.x); // Get min,max of array
+  const [timeMin, timeMax] = d3.extent(data, (d) => d.time); // Get min,max of array
   const xScale = useMemo(() => {
     return d3
-      .scaleLinear()
-      .domain([xMin || 0, xMax || 0])
+      .scaleTime()
+      .domain([timeMin || 0, timeMax || 0])
       .range([0, boundsWidth]);
   }, [data, width]);
 
@@ -52,16 +52,16 @@ export const AreaChart = ({ width, height, data }: AreaChartProps) => {
   // Build the line
   const areaBuilder = d3
     .area<DataPoint>()
-    .x((d) => xScale(d.x))
-    .y1((d) => yScale(d.y))
+    .x((d) => xScale(d.time))
+    .y1((d) => yScale(d.value))
     .y0(yScale(0));
   const areaPath = areaBuilder(data);
 
   // Build the line
   const lineBuilder = d3
     .line<DataPoint>()
-    .x((d) => xScale(d.x))
-    .y((d) => yScale(d.y));
+    .x((d) => xScale(d.time))
+    .y((d) => yScale(d.value));
   const linePath = lineBuilder(data);
 
   if (!linePath || !areaPath) {
@@ -73,8 +73,8 @@ export const AreaChart = ({ width, height, data }: AreaChartProps) => {
       <svg width={width} height={height}>
         <defs>
           <linearGradient id="colorGradient" gradientTransform='rotate(90)'>
-            <stop offset="0%" stopColor="#b451e8" />
-            <stop offset="100%" stopColor="#daacf2" />
+            <stop offset="50%" stopColor="#b451e8" />
+            <stop offset="80%" stopColor="#daacf2" />
           </linearGradient>
         </defs>
         <g
