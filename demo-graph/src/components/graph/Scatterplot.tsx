@@ -20,6 +20,7 @@ export const Scatterplot = ({ width, height, data }: ScatterplotProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
   const transparentRef = useRef(null);
+  let range : number[] = [];
   // Scales
   const yScale = d3.scaleLinear().domain([0, 10]).range([boundsHeight, 0]);
   const xScale = d3
@@ -29,14 +30,15 @@ export const Scatterplot = ({ width, height, data }: ScatterplotProps) => {
 
   // Build the shapes
   const allShapes = data.map((d, i) => {
+    const isColored = !range.length || (range[0] <= d.x && d.x <= range[2] && range[3]<=d.y && d.y<=range[1]);
     return (
       <circle
         key={i}
         r={8}
         cx={xScale(d.x)}
         cy={yScale(d.y)}
-        stroke='red'
-        fill='red'
+        stroke='pink'
+        fill = {isColored ? 'red' : 'pink'}
         fillOpacity={0.7}
       />
     );
@@ -56,8 +58,8 @@ export const Scatterplot = ({ width, height, data }: ScatterplotProps) => {
       return;
     }
     let [[x0,y0], [x1,y1]] = event.selection;
-    let range = [[xScale.invert(x0),yScale.invert(y0)],[xScale.invert(x1),yScale.invert(y1)]];
-    alert(range[0][0]+' '+range[0][1]+' '+range[1][0]+' '+range[1][1]);
+    range = [xScale.invert(x0),yScale.invert(y0),xScale.invert(x1),yScale.invert(y1)];
+    alert(range[0]+' '+range[1]+' '+range[2]+' '+range[3]);
   };
 
   return (
