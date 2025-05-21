@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 };
@@ -13,6 +13,8 @@ type AreaChartProps = {
 // Learn how to zoom at https://d3-graph-gallery.com/graph/area_brushZoom.html
 export const TimeAreaChart = ({ width, height, data }: AreaChartProps) => {
   // bounds = area inside the graph axis = calculated by substracting the margins
+  const transparentRef = useRef(null);
+  let range : Date[] = [];
   const axesRef = useRef(null);
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
@@ -49,6 +51,29 @@ export const TimeAreaChart = ({ width, height, data }: AreaChartProps) => {
     svgElement.append('g').call(yAxisGenerator);
   }, [xScale, yScale, boundsHeight]);
 
+  // Render custom circle
+  useEffect(() => {
+    const chartElement = d3.select(transparentRef.current);
+    chartElement.selectAll("*").remove();
+    var myCircle = chartElement.append("circle")
+                               .attr("cx",150)
+                               .attr("cy",150)
+                               .attr("r",40)
+                               .attr("fill","#69a3b2");
+    var brush : any = d3.brushX().extent([[0,0],[boundsWidth,boundsHeight]])
+                        .on("end", brushEnd);
+    chartElement.call(brush);
+  },[]);
+
+  const brushEnd = (event: any) => {
+    if (!event.selection) {
+      return;
+    }
+    const [x1, x2] = event.selection;
+    range = [xScale.invert(x1),xScale.invert(x2)];
+    alert(range[0]+' '+range[1]);
+  };
+
   // Build the line
   const areaBuilder = d3
     .area<DataPoint>()
@@ -77,6 +102,11 @@ export const TimeAreaChart = ({ width, height, data }: AreaChartProps) => {
             <stop offset="80%" stopColor="#daacf2" />
           </linearGradient>
         </defs>
+        <g
+          width={boundsWidth}
+          height={boundsHeight}
+          ref={transparentRef}
+          transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}></g>
         <g
           width={boundsWidth}
           height={boundsHeight}

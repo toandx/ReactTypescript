@@ -64,7 +64,6 @@
           .on("end", updateChart)               // Each time the brush selection changes, trigger the 'updateChart' function
 
       // Create the area variable: where both the area and the brush take place
-      // Add transparent rect
       var area = svg.append('g')
         .attr("clip-path", "url(#clip)")
 
