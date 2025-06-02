@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom"
+import HomePage from './pages/Home'
+import LoginPage from './pages/Login'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const loggedIn : boolean = false;
   return (
-    <div>
-      <h1>Demo ViteJS</h1>
-      <button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        { loggedIn ? (
+          <>
+            <Route path='/'  element={<HomePage />}/>
+            <Route path='*' element={<HomePage />} />
+          </>
+        ) : (
+          <>
+            <Route path='/login' element={<LoginPage />}/>
+            <Route path='/*' element={<Navigate to='/login'/>} />
+          </>
+        )} 
+      </Routes>
+    </BrowserRouter>
   )
 }
 
