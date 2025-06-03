@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { AuthContext } from "./Auth";
+import { useAuth } from "./Auth";
 
 const AuthContextComponent = () => {
-  const context = useContext(AuthContext);
+  const context = useAuth();
 
   if (!context) {
     throw new Error("ChildComponent must be used within a ThemeProvider");
