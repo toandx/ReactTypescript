@@ -7,11 +7,8 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-interface ThemeProviderProps {
-  children: ReactNode;
-}
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider = ({ children } : {children: ReactNode}) => {
   const [theme, setTheme] = useState<Theme>('light');
 
   const toggleTheme = () => {

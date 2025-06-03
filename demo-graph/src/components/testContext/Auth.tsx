@@ -4,6 +4,7 @@ interface AuthContextType {
   username: string;
   password: string;
   updateUser: () => void;
+  setUser: (username: string, password : string) => void;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const useAuth = () => {
@@ -18,12 +19,16 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [password, setPassword] = useState<string>('admin');
 
   const updateUser = () => {
-    setUsername('toandx');
+    setUsername(username+'a');
     setPassword('123');
   };
+  const setUser = (username: string, password: string) => {
+    setUsername(username);
+    setPassword(password);
+  }
 
   return (
-    <AuthContext.Provider value={{ username, password, updateUser }}>
+    <AuthContext.Provider value={{ username, password, updateUser, setUser }}>
       {children}
     </AuthContext.Provider>
   );
