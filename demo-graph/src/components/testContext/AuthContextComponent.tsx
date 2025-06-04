@@ -5,7 +5,8 @@ const AuthContextComponent = () => {
   const context = useAuth();
 
   if (!context) {
-    throw new Error("ChildComponent must be used within a ThemeProvider");
+    // Only can useAuth() in a component in a <AuthProvider> </AuthProvider>
+    throw new Error("ChildComponent must be used within a AuthProvider");
   }
 
   const { username, password, updateUser, setUser } = context; 
