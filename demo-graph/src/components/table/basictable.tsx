@@ -1,5 +1,3 @@
-import React from 'react';
-import { useTable, Column } from 'react-table';
 type Product = {
   name: string;
   price: number;

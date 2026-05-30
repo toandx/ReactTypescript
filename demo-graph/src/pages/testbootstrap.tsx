@@ -21,6 +21,7 @@ function TestBootstrap () {
             <div className="d-flex bg-light flex-row-reverse justify-content-center">
                 <div className="p-2 border bg-info">Flex item 1</div> {/*Padding 2, Add border, background info*/}
                 <div className="p-2 border bg-warning">Flex item 2</div>
+                <h1> Ha ha ha</h1>
             </div>
             <div className="d-flex bg-light" style={{height:150}}>
                 <div className="p-2 border bg-info">Flex item 3</div> {/*Padding 2, Add border, background info*/}
