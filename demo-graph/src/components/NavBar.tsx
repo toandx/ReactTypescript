@@ -1,15 +1,21 @@
 import Container from 'react-bootstrap/Container';
-import { Nav,Navbar,NavDropdown } from 'react-bootstrap';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 const NavBar = () => {
   return (
-      <Navbar bg="light" variant="light" expand="lg" collapseOnSelect>
+      <Navbar bg="light" variant="light" expand="lg">
       <Container>
-        <Navbar.Brand href="/">ToanDX</Navbar.Brand>
+        <Navbar.Brand href="/">
+          ToanDX
+        </Navbar.Brand>
+
+        {/* Toggle button */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         {/* Collapsible menu */}
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="ms-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <NavDropdown title="Demo">
               <NavDropdown.Item href="/d3">
@@ -23,9 +29,6 @@ const NavBar = () => {
                 Context
               </NavDropdown.Item>
             </NavDropdown>
-          </Nav>
-          <Nav className="ms-auto">
-            <Nav.Link href="/">Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
