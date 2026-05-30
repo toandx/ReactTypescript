@@ -1,9 +1,8 @@
-import { Outlet, Link } from "react-router-dom";
-import Container from 'react-bootstrap/Container';
+import { Outlet } from "react-router-dom";
 import NavBar from "./NavBar";
 const MasterLayout = () => {
   return (
-    <div className = "container-fluid">
+    <div>
       <NavBar />
       <Outlet />
     </div>
