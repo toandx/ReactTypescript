@@ -25,7 +25,7 @@ const NavBar = () => {
             </NavDropdown>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link href="/">Login</Nav.Link>
+            <Nav.Link href="/login">Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

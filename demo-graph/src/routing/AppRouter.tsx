@@ -4,6 +4,7 @@ import TestD3 from "../pages/testd3";
 import TestContext from "../pages/testcontext";
 import TestAxios from "../pages/testAxios";
 import Home from "../pages/home/Home";
+import Login from "../pages/login/Login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function AppRouter() {
@@ -15,6 +16,7 @@ function AppRouter() {
           <Route path='/d3' element={<TestD3 data={[1,2,3]} />}/>
           <Route path='/context' element={<TestContext />}/>
           <Route path='/axios' element={<TestAxios />}/>
+          <Route path='/login' element={<Login />}/>
         </Route>
       </Routes>
     </BrowserRouter>
