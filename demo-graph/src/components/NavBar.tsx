@@ -1,6 +1,13 @@
 import Container from 'react-bootstrap/Container';
-import { Nav,Navbar,NavDropdown } from 'react-bootstrap';
+import { Nav,Navbar,NavDropdown, Button } from 'react-bootstrap';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 const NavBar = () => {
+  const userContext = useContext(UserContext);
+  const logout = () => {
+    localStorage.setItem("jwt", '');
+    userContext?.setUser('');
+  };
   return (
       <Navbar bg="light" variant="light" expand="lg" collapseOnSelect>
       <Container>
@@ -24,8 +31,17 @@ const NavBar = () => {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Nav className="ms-auto">
-            <Nav.Link href="/login">Login</Nav.Link>
+          <Nav className="ms-auto align-items-center">
+            {userContext?.user ? (
+              <>
+                <Navbar.Text className="me-3">
+                  Hello {userContext?.user}
+                </Navbar.Text>
+                <Button onClick={logout}>Logout</Button>
+              </>
+            ) : (
+              <Nav.Link href="/login">Login</Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

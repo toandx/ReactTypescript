@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
+
 import axios from 'axios';
 import config from "../../config";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -21,6 +24,7 @@ function Login() {
         const token = response.data.accessToken;
         localStorage.setItem("jwt", token);
         console.log("Login success "+token);
+        userContext?.setUser(username);
         navigate('/');
     } catch (error) {
         console.error('Login failed:', error);
