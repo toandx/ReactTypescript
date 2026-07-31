@@ -22,6 +22,9 @@ const NavBar = () => {
               <NavDropdown.Item href="/d3">
                 D3
               </NavDropdown.Item>
+              <NavDropdown.Item href="/random">
+                Random
+              </NavDropdown.Item>
               <NavDropdown.Item href="/axios">
                 Axios
               </NavDropdown.Item>
