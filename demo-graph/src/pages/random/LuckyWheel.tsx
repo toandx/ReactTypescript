@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-
-interface WheelItem {
-    id: number;
-    text: string;
-    color: string;
-}
-
-interface Props {
-    items: WheelItem[];
-}
-
+import { useEffect, useRef, useState } from "react";
+import { Button } from "react-bootstrap";
 const SIZE = 500;
 
-export default function LuckyWheel({ items }: Props) {
+type WheelItem = {
+    text: string;
+    color: string;
+};
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+type Props = {
+    items: WheelItem[];
+};
+
+function LuckyWheel({ items }: Props) {
+
+    const canvasRandom =
+        useRef<HTMLCanvasElement>(null);
 
     const [rotation, setRotation] = useState(0);
     const [spinning, setSpinning] = useState(false);
@@ -24,158 +24,414 @@ export default function LuckyWheel({ items }: Props) {
     }, [rotation, items]);
 
     const draw = (angle: number) => {
-
-        const canvas = canvasRef.current;
-
+        const canvas = canvasRandom.current;
         if (!canvas) return;
-
+        
         const ctx = canvas.getContext("2d");
-
         if (!ctx) return;
 
-        ctx.clearRect(0,0,SIZE,SIZE);
-
+        ctx.clearRect(0, 0, SIZE, SIZE);
+        
         const center = SIZE / 2;
         const radius = 220;
-
-        const piece = Math.PI * 2 / items.length;
+        // Tổng số radian của một vòng tròn
+        const TWO_PI = Math.PI * 2;
+        // Góc của mỗi phần
+        const piece = TWO_PI / items.length;
 
         ctx.save();
-
         ctx.translate(center,center);
+
         ctx.rotate(angle);
 
-        items.forEach((item,index)=>{
 
-            const start = index * piece;
-            const end = start + piece;
+        items.forEach((item, index) => {
+
+            const start = index * piece; // Start angle
+            const end = start + piece; // End angle
 
             ctx.beginPath();
             ctx.moveTo(0,0);
+
             ctx.arc(0,0,radius,start,end);
-            ctx.fillStyle = item.color;
+
+            ctx.closePath();
+
+            ctx.fillStyle =item.color;
+
             ctx.fill();
 
+            ctx.strokeStyle ="black";
             ctx.stroke();
-
             ctx.save();
 
-            ctx.rotate(start + piece/2);
+            ctx.rotate(
+                start + piece / 2
+            );
 
-            ctx.textAlign="right";
-            ctx.font="20px Arial";
-            ctx.fillStyle="black";
 
-            ctx.fillText(item.text,radius-20,10);
+            ctx.textAlign = "right";
+            ctx.textBaseline ="middle";
+            ctx.font ="20px Arial";
 
+            ctx.fillStyle ="black";
+            ctx.fillText(
+                item.text,
+                radius - 20,
+                0
+            );
             ctx.restore();
-
         });
 
+
+        /*
+         * Khôi phục hệ tọa độ ban đầu.
+         */
         ctx.restore();
 
-        // Center circle
 
+        /*
+         * Vẽ hình tròn ở giữa.
+         */
         ctx.beginPath();
-        ctx.arc(center,center,40,0,Math.PI*2);
-        ctx.fillStyle="white";
-        ctx.fill();
-        ctx.stroke();
 
+        ctx.arc(center,center,40,0,TWO_PI); // Draw center circle with background white, border black
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.strokeStyle = "black";
+
+        ctx.stroke();
     };
 
+
+    /**
+     * Quay vòng.
+     */
     const spin = () => {
 
-        if(spinning) return;
+        // Không cho click khi đang quay
+        if (spinning) {
+            return;
+        }
+
+        // Không có phần thưởng thì không quay
+        if (items.length === 0) {
+            return;
+        }
 
         setSpinning(true);
 
-        const winner = Math.floor(Math.random()*items.length);
-        console.log('Winner '+winner);
 
-        const piece = 360/items.length;
+        /*
+         * ==========================================
+         * 1. Chọn winner ngẫu nhiên
+         * ==========================================
+         */
 
-        const stopAngle =
-            360*6 +
-            (360 - winner*piece - piece/2);
+        const winner =
+            Math.floor(
+                Math.random() * items.length
+            );
 
-        const start = rotation;
+        console.log(
+            "Winner index:",
+            winner
+        );
 
-        const end = start + stopAngle * Math.PI /180;
+
+        /*
+         * ==========================================
+         * 2. Các giá trị hình học
+         * ==========================================
+         */
+
+        const TWO_PI =
+            Math.PI * 2;
+
+        const piece = TWO_PI / items.length;
+
+
+        /*
+         * Pointer của bạn nằm phía trên vòng.
+         *
+         * Canvas:
+         *
+         *          -90° V
+         *            ↑
+         *            |
+         * 180° ←─────●─────→ 0°
+         *            |
+         *            ↓
+         *           90°
+         */
+        const pointerAngle = -Math.PI / 2;
+        const winnerCenter = (winner + 0.5) * piece;
+
+
+        /*
+         * ==========================================
+         * 4. Tìm rotation cần đạt tới
+         * ==========================================
+         *
+         * Ta cần:
+         *
+         * rotation
+         *     +
+         * winnerCenter
+         *     =
+         * pointerAngle
+         *
+         * Vì vậy:
+         *
+         * rotation =
+         * pointerAngle - winnerCenter
+         */
+
+        const targetAngle = pointerAngle - winnerCenter; // -90 - (winnerId+1/2)*piece
+
+
+        console.log(
+            "Winner center:",
+            winnerCenter * 180 / Math.PI
+        );
+
+        console.log(
+            "Target angle:",
+            targetAngle * 180 / Math.PI
+        );
+
+
+        /*
+         * ==========================================
+         * 5. Tính số góc cần quay thêm
+         * ==========================================
+         *
+         * rotation có thể đang ở bất kỳ góc nào.
+         *
+         * Ví dụ:
+         *
+         * rotation = 2500°
+         *
+         * Ta không thể giả định rotation = 0.
+         *
+         * Công thức dưới đây tìm khoảng cách
+         * dương nhỏ nhất từ rotation hiện tại
+         * tới target.
+         */
+
+        const delta =
+            (
+                (
+                    targetAngle -
+                    rotation
+                ) % TWO_PI
+                + TWO_PI
+            ) % TWO_PI
+            + TWO_PI * 6;
+
+
+        /*
+         * + TWO_PI * 6
+         *
+         * nghĩa là quay thêm 6 vòng.
+         */
+
+        console.log(
+            "Delta:",
+            delta * 180 / Math.PI
+        );
+
+
+        /*
+         * ==========================================
+         * 6. Xác định start và end
+         * ==========================================
+         */
+
+        const start =
+            rotation;
+
+        const end =
+            start + delta;
+
+
+        console.log(
+            "Start:",
+            start * 180 / Math.PI
+        );
+
+        console.log(
+            "End:",
+            end * 180 / Math.PI
+        );
 
         const duration = 5000;
 
-        const startTime = performance.now();
+        const startTime =
+            performance.now();
 
-        const animate = (time:number)=>{
 
-            const elapsed = time-startTime;
+        const animate =
+            (time: number) => {
 
-            const t = Math.min(elapsed/duration,1);
+                /*
+                 * Thời gian đã trôi qua.
+                 */
+                const elapsed =
+                    time - startTime;
 
-            // ease out cubic
 
-            const progress = 1-Math.pow(1-t,3);
+                /*
+                 * Chuyển thành khoảng 0 → 1.
+                 */
+                const t =
+                    Math.min(
+                        elapsed / duration,
+                        1
+                    );
 
-            const current = start + (end-start)*progress;
 
-            setRotation(current);
+                /*
+                 * Ease-out cubic.
+                 *
+                 * Ban đầu nhanh,
+                 * cuối cùng chậm dần.
+                 */
+                const progress =
+                    1 -
+                    Math.pow(
+                        1 - t,
+                        3
+                    );
 
-            if(t<1){
 
-                requestAnimationFrame(animate);
+                /*
+                 * Nội suy giữa start và end.
+                 */
+                const current =
+                    start +
+                    (end - start) *
+                    progress;
 
-            }else{
 
-                setRotation(end%(Math.PI*2));
+                /*
+                 * Cập nhật rotation.
+                 */
+                setRotation(current);
 
-                setSpinning(false);
 
-                alert("Winner: "+items[winner].text);
+                /*
+                 * Chưa hoàn thành
+                 * → tiếp tục frame tiếp theo.
+                 */
+                if (t < 1) {
 
-            }
+                    requestAnimationFrame(
+                        animate
+                    );
 
-        }
+                } else {
 
-        requestAnimationFrame(animate);
+                    /*
+                     * Animation hoàn thành.
+                     *
+                     * Đưa rotation về khoảng
+                     * 0 → 2π để tránh số quá lớn.
+                     */
+                    const finalRotation =
+                        (
+                            end % TWO_PI
+                            + TWO_PI
+                        ) % TWO_PI;
 
-    }
+
+                    setRotation(
+                        finalRotation
+                    );
+
+
+                    setSpinning(false);
+
+
+                    /*
+                     * Hiển thị kết quả.
+                     */
+                    alert(
+                        "Winner: " +
+                        items[winner].text
+                    );
+                }
+            };
+
+
+        /*
+         * Bắt đầu animation.
+         */
+        requestAnimationFrame(
+            animate
+        );
+    };
+
 
     return (
 
         <div>
 
-            <div style={{position:"relative",width:SIZE}}>
+            <div
+                style={{
+                    position: "relative",
+                    width: SIZE,
+                    height: SIZE
+                }}
+            >
 
                 <canvas
-
-                    ref={canvasRef}
+                    ref={canvasRandom}
                     width={SIZE}
                     height={SIZE}
                 />
 
+
+                {/* Pointer */}
+
                 <div
                     style={{
-                        position:"absolute",
-                        left:"50%",
-                        top:0,
-                        transform:"translateX(-50%)",
-                        width:0,
-                        height:0,
-                        borderLeft:"20px solid transparent",
-                        borderRight:"20px solid transparent",
-                        borderTop:"40px solid red"
+                        position: "absolute",
+
+                        left: "50%",
+
+                        top: 0,
+
+                        transform:
+                            "translateX(-50%)",
+
+                        width: 0,
+
+                        height: 0,
+
+                        borderLeft:
+                            "20px solid transparent",
+
+                        borderRight:
+                            "20px solid transparent",
+
+                        borderTop:
+                            "40px solid red",
+
+                        zIndex: 10
                     }}
                 />
 
             </div>
 
-            <button onClick={spin} disabled={spinning}>
-                {spinning ? "Spinning..." : "Spin"}
-            </button>
+        <Button variant="primary" onClick={spin} disabled={spinning}>
+        {spinning
+            ? "Spinning..."
+            : "Spin"}
+        </Button>
 
         </div>
-
     );
-
 }
+
+export default LuckyWheel;
