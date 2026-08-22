@@ -2,26 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 const SIZE = 500;
 const colors: string[] = [
-  "#FF0000", // Red
-  "#FF7F00", // Orange
-  "#FFD700", // Gold
-  "#FFFF00", // Yellow
-  "#7FFF00", // Chartreuse
-  "#00FF00", // Lime
-  "#00FA9A", // Spring Green
-  "#00FFFF", // Cyan
-  "#00BFFF", // Deep Sky Blue
-  "#0000FF", // Blue
-  "#4B0082", // Indigo
-  "#8A2BE2", // Blue Violet
-  "#EE82EE", // Violet
-  "#FF1493", // Deep Pink
-  "#FF69B4", // Hot Pink
-  "#DC143C", // Crimson
-  "#A52A2A", // Brown
-  "#808000", // Olive
-  "#008080", // Teal
-  "#808080", // Gray
+  "#FF6B6B",
+  "#FFA94D",
+  "#FFD43B",
+  "#69DB7C",
+  "#38D9A9",
+  "#3BC9DB",
+  "#4DABF7",
+  "#748FFC",
+  "#9775FA",
+  "#DA77F2",
+  "#F783AC",
+  "#FF8787",
 ];
 type WheelItem = {
     text: string;
@@ -34,7 +26,7 @@ type Props = {
 type TextAreaChange = React.ChangeEvent<HTMLTextAreaElement>;
 
 function LuckyWheel() {
-    let items : WheelItem[] = [
+    let firstItem : WheelItem[] = [
         {text:"iPhone",color:"#ffadad"},
         {text:"100K",color:"#ffd6a5"},
         {text:"AirPods",color:"#fdffb6"},
@@ -49,6 +41,8 @@ function LuckyWheel() {
 
     const [rotation, setRotation] = useState(0);
     const [text, setText] = useState('');
+    const [items, setItems] = useState(firstItem);
+
     const [spinning, setSpinning] = useState(false);
 
     useEffect(() => {
@@ -345,7 +339,8 @@ function LuckyWheel() {
         for(let id in arr) {
             itemsOption.push({text:arr[id],color:colors[id]});
         }
-        items = itemsOption;
+        console.log('itemsOption:'+JSON.stringify(itemsOption));
+        setItems(itemsOption);
     }
 
     return (
