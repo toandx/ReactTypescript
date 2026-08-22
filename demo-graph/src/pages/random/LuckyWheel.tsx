@@ -1,7 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 const SIZE = 500;
-
+const colors: string[] = [
+  "#FF0000", // Red
+  "#FF7F00", // Orange
+  "#FFD700", // Gold
+  "#FFFF00", // Yellow
+  "#7FFF00", // Chartreuse
+  "#00FF00", // Lime
+  "#00FA9A", // Spring Green
+  "#00FFFF", // Cyan
+  "#00BFFF", // Deep Sky Blue
+  "#0000FF", // Blue
+  "#4B0082", // Indigo
+  "#8A2BE2", // Blue Violet
+  "#EE82EE", // Violet
+  "#FF1493", // Deep Pink
+  "#FF69B4", // Hot Pink
+  "#DC143C", // Crimson
+  "#A52A2A", // Brown
+  "#808000", // Olive
+  "#008080", // Teal
+  "#808080", // Gray
+];
 type WheelItem = {
     text: string;
     color: string;
@@ -10,13 +31,24 @@ type WheelItem = {
 type Props = {
     items: WheelItem[];
 };
+type TextAreaChange = React.ChangeEvent<HTMLTextAreaElement>;
 
-function LuckyWheel({ items }: Props) {
-
+function LuckyWheel() {
+    let items : WheelItem[] = [
+        {text:"iPhone",color:"#ffadad"},
+        {text:"100K",color:"#ffd6a5"},
+        {text:"AirPods",color:"#fdffb6"},
+        {text:"Laptop",color:"#caffbf"},
+        {text:"Mouse",color:"#9bf6ff"},
+        {text:"Keyboard",color:"#a0c4ff"},
+        {text:"Nothing",color:"#bdb2ff"},
+        {text:"Monitor",color:"#ffc6ff"}
+    ];
     const canvasRandom =
         useRef<HTMLCanvasElement>(null);
 
     const [rotation, setRotation] = useState(0);
+    const [text, setText] = useState('');
     const [spinning, setSpinning] = useState(false);
 
     useEffect(() => {
@@ -190,17 +222,6 @@ function LuckyWheel({ items }: Props) {
         const targetAngle = pointerAngle - winnerCenter; // -90 - (winnerId+1/2)*piece
 
 
-        console.log(
-            "Winner center:",
-            winnerCenter * 180 / Math.PI
-        );
-
-        console.log(
-            "Target angle:",
-            targetAngle * 180 / Math.PI
-        );
-
-
         /*
          * ==========================================
          * 5. Tính số góc cần quay thêm
@@ -236,11 +257,6 @@ function LuckyWheel({ items }: Props) {
          * nghĩa là quay thêm 6 vòng.
          */
 
-        console.log(
-            "Delta:",
-            delta * 180 / Math.PI
-        );
-
 
         /*
          * ==========================================
@@ -248,22 +264,9 @@ function LuckyWheel({ items }: Props) {
          * ==========================================
          */
 
-        const start =
-            rotation;
+        const start =rotation;
 
-        const end =
-            start + delta;
-
-
-        console.log(
-            "Start:",
-            start * 180 / Math.PI
-        );
-
-        console.log(
-            "End:",
-            end * 180 / Math.PI
-        );
+        const end =start + delta;
 
         const duration = 5000;
 
@@ -290,35 +293,9 @@ function LuckyWheel({ items }: Props) {
                         1
                     );
 
-
-                /*
-                 * Ease-out cubic.
-                 *
-                 * Ban đầu nhanh,
-                 * cuối cùng chậm dần.
-                 */
-                const progress =
-                    1 -
-                    Math.pow(
-                        1 - t,
-                        3
-                    );
-
-
-                /*
-                 * Nội suy giữa start và end.
-                 */
-                const current =
-                    start +
-                    (end - start) *
-                    progress;
-
-
-                /*
-                 * Cập nhật rotation.
-                 */
+                const progress = 1 - Math.pow(1 - t,3); // From 0 to 1, first fast, then slow
+                const current = start + (end - start) * progress;
                 setRotation(current);
-
 
                 /*
                  * Chưa hoàn thành
@@ -351,27 +328,25 @@ function LuckyWheel({ items }: Props) {
 
 
                     setSpinning(false);
-
-
-                    /*
-                     * Hiển thị kết quả.
-                     */
-                    alert(
-                        "Winner: " +
-                        items[winner].text
-                    );
+                    alert("Winner: " +items[winner].text);
                 }
             };
 
-
-        /*
-         * Bắt đầu animation.
-         */
         requestAnimationFrame(
             animate
         );
     };
-
+    const fn_updateOption= (e: TextAreaChange) => {
+        console.log('Update text:'+e.target.value);
+        setText(e.target.value);
+        let arr = text.split('\n');
+        console.log('arr:'+JSON.stringify(arr));
+        let itemsOption : WheelItem[] = [];
+        for(let id in arr) {
+            itemsOption.push({text:arr[id],color:colors[id]});
+        }
+        items = itemsOption;
+    }
 
     return (
 
@@ -423,7 +398,7 @@ function LuckyWheel({ items }: Props) {
                 />
 
             </div>
-
+            <textarea value={text} onChange={fn_updateOption}/>
         <Button variant="primary" onClick={spin} disabled={spinning}>
         {spinning
             ? "Spinning..."

@@ -14,7 +14,8 @@ function Random() {
 
     return (
       <div>
-        <LuckyWheel items={items}/>
+        <LuckyWheel/>
+
       </div>
     )
 
