@@ -25,24 +25,11 @@ type Props = {
 };
 type TextAreaChange = React.ChangeEvent<HTMLTextAreaElement>;
 
-function LuckyWheel() {
-    let firstItem : WheelItem[] = [
-        {text:"iPhone",color:"#ffadad"},
-        {text:"100K",color:"#ffd6a5"},
-        {text:"AirPods",color:"#fdffb6"},
-        {text:"Laptop",color:"#caffbf"},
-        {text:"Mouse",color:"#9bf6ff"},
-        {text:"Keyboard",color:"#a0c4ff"},
-        {text:"Nothing",color:"#bdb2ff"},
-        {text:"Monitor",color:"#ffc6ff"}
-    ];
+function LuckyWheel({items} : Props) {
     const canvasRandom =
         useRef<HTMLCanvasElement>(null);
 
     const [rotation, setRotation] = useState(0);
-    const [text, setText] = useState('');
-    const [items, setItems] = useState(firstItem);
-
     const [spinning, setSpinning] = useState(false);
 
     useEffect(() => {
@@ -330,18 +317,7 @@ function LuckyWheel() {
             animate
         );
     };
-    const fn_updateOption= (e: TextAreaChange) => {
-        console.log('Update text:'+e.target.value);
-        setText(e.target.value);
-        let arr = text.split('\n');
-        console.log('arr:'+JSON.stringify(arr));
-        let itemsOption : WheelItem[] = [];
-        for(let id in arr) {
-            itemsOption.push({text:arr[id],color:colors[id]});
-        }
-        console.log('itemsOption:'+JSON.stringify(itemsOption));
-        setItems(itemsOption);
-    }
+    
 
     return (
 
@@ -393,7 +369,6 @@ function LuckyWheel() {
                 />
 
             </div>
-            <textarea value={text} onChange={fn_updateOption}/>
         <Button variant="primary" onClick={spin} disabled={spinning}>
         {spinning
             ? "Spinning..."
