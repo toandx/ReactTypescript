@@ -1,5 +1,5 @@
 import LuckyWheel from "./LuckyWheel";
-import { useEffect, useRef, useState } from "react";
+import {useState } from "react";
 const colors: string[] = [
   "#FF6B6B",
   "#FFA94D",
@@ -33,9 +33,9 @@ function Random() {
     const [items, setItems] = useState(firstItem);
     const [text, setText] = useState('');
     const fn_updateOption= (e: TextAreaChange) => {
-        console.log('Update text:'+e.target.value);
-        setText(e.target.value);
-        let arr = text.split('\n');
+        let newText = e.target.value;
+        setText(e.target.value); // useState setText is async, not run sequentially
+        let arr = newText.split('\n');
         console.log('arr:'+JSON.stringify(arr));
         let itemsOption : WheelItem[] = [];
         for(let id in arr) {
@@ -46,8 +46,8 @@ function Random() {
     }
 
     return (
-      <div>
-        <LuckyWheel items={items}/>
+      <div style={{width: '100%', height: '100%'}}>
+        <LuckyWheel  items={items}/>
         <textarea value={text} onChange={fn_updateOption}/>
       </div>
     )
