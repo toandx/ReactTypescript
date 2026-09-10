@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-const SIZE = 500;
+const SIZE = 700;
 const colors: string[] = [
   "#FF6B6B",
   "#FFA94D",
@@ -46,7 +46,7 @@ function LuckyWheel({items} : Props) {
         ctx.clearRect(0, 0, SIZE, SIZE);
         
         const center = SIZE / 2;
-        const radius = 220;
+        const radius = SIZE *0.45 ;
         // Tổng số radian của một vòng tròn
         const TWO_PI = Math.PI * 2;
         // Góc của mỗi phần
@@ -321,7 +321,7 @@ function LuckyWheel({items} : Props) {
 
     return (
 
-        <div>
+        <div style={{width:'70%'}} >
 
             <div
                 style={{

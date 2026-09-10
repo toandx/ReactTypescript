@@ -46,9 +46,9 @@ function Random() {
     }
 
     return (
-      <div style={{width: '100%', height: '100%'}}>
-        <LuckyWheel  items={items}/>
-        <textarea value={text} onChange={fn_updateOption}/>
+      <div style={{width: '100vw', height: '90vh', display:'flex'}}>
+        <LuckyWheel items={items}/>
+        <textarea style={{width:'30%'}} value={text} onChange={fn_updateOption}/>
       </div>
     )
 
