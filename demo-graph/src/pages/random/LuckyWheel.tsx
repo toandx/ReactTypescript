@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-const SIZE = 700;
+const SIZE = 450;
 const colors: string[] = [
   "#FF6B6B",
   "#FFA94D",
@@ -22,10 +22,11 @@ type WheelItem = {
 
 type Props = {
     items: WheelItem[];
+    className? : string;
 };
 type TextAreaChange = React.ChangeEvent<HTMLTextAreaElement>;
 
-function LuckyWheel({items} : Props) {
+function LuckyWheel({items, className} : Props) {
     const canvasRandom =
         useRef<HTMLCanvasElement>(null);
 
@@ -321,7 +322,7 @@ function LuckyWheel({items} : Props) {
 
     return (
 
-        <div style={{width:'70%'}} >
+        <div className={className} >
 
             <div
                 style={{

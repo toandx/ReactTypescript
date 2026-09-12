@@ -1,5 +1,6 @@
 import LuckyWheel from "./LuckyWheel";
 import {useState } from "react";
+import './random.css';
 const colors: string[] = [
   "#FF6B6B",
   "#FFA94D",
@@ -46,9 +47,9 @@ function Random() {
     }
 
     return (
-      <div style={{width: '100vw', height: '90vh', display:'flex'}}>
-        <LuckyWheel items={items}/>
-        <textarea style={{width:'30%'}} value={text} onChange={fn_updateOption}/>
+      <div className="random">
+        <LuckyWheel items={items} className="lucky-wheel"/>
+        <textarea className="text" value={text} onChange={fn_updateOption}/>
       </div>
     )
 
