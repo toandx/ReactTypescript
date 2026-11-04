@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { Button } from "react-bootstrap";
-const SIZE = 700;
+const SIZE = 500; // logical drawing size; actual size scales to fit container
 const colors: string[] = [
   "#FF6B6B",
   "#FFA94D",
@@ -22,19 +22,36 @@ type WheelItem = {
 
 type Props = {
     items: WheelItem[];
+    children?: ReactNode; // rendered in the side/bottom panel (e.g. textarea)
 };
 type TextAreaChange = React.ChangeEvent<HTMLTextAreaElement>;
 
-function LuckyWheel({items} : Props) {
+function LuckyWheel({items, children} : Props) {
     const canvasRandom =
         useRef<HTMLCanvasElement>(null);
 
+    const paneRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState(SIZE);
     const [rotation, setRotation] = useState(0);
     const [spinning, setSpinning] = useState(false);
 
+    // Fit wheel to its pane: square of min(width, height)
+    useEffect(() => {
+        const pane = paneRef.current;
+        if (!pane) return;
+        const update = () => {
+            const s = Math.floor(Math.min(pane.clientWidth, pane.clientHeight));
+            if (s > 0) setSize(s);
+        };
+        update();
+        const ro = new ResizeObserver(update);
+        ro.observe(pane);
+        return () => ro.disconnect();
+    }, []);
+
     useEffect(() => {
         draw(rotation);
-    }, [rotation, items]);
+    }, [rotation, items, size]);
 
     const draw = (angle: number) => {
         const canvas = canvasRandom.current;
@@ -43,10 +60,13 @@ function LuckyWheel({items} : Props) {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        const dpr = window.devicePixelRatio || 1;
+        const scale = size / SIZE;
+        ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
         ctx.clearRect(0, 0, SIZE, SIZE);
         
         const center = SIZE / 2;
-        const radius = SIZE *0.45 ;
+        const radius = 220;
         // Tổng số radian của một vòng tròn
         const TWO_PI = Math.PI * 2;
         // Góc của mỗi phần
@@ -319,50 +339,52 @@ function LuckyWheel({items} : Props) {
     };
     
 
+    const dpr = window.devicePixelRatio || 1;
+    const scale = size / SIZE;
+
     return (
-
-        <div style={{width:'70%'}} >
-
-            <div
-                style={{
-                    position: "relative",
-                    width: SIZE,
-                    height: SIZE
-                }}
-            >
-
-                <canvas
-                    ref={canvasRandom}
-                    width={SIZE}
-                    height={SIZE}
-                />
-
-
-                {/* Pointer */}
-
+        <>
+            <div className="random-wheel-pane" ref={paneRef}>
                 <div
                     style={{
-                        position: "absolute",
-                        left: "50%",
-                        top: 0,
-                        transform: "translateX(-50%)",
-                        width: 0,
-                        height: 0,
-                        borderLeft: "20px solid transparent",
-                        borderRight:"20px solid transparent",
-                        borderTop:"40px solid red",
-                        zIndex: 10
+                        position: "relative",
+                        width: size,
+                        height: size,
+                        flex: "0 0 auto"
                     }}
-                />
+                >
+                    <canvas
+                        ref={canvasRandom}
+                        width={Math.round(size * dpr)}
+                        height={Math.round(size * dpr)}
+                        style={{ width: size, height: size, display: "block" }}
+                    />
 
+                    {/* Pointer */}
+                    <div
+                        style={{
+                            position: "absolute",
+                            left: "50%",
+                            top: 0,
+                            transform: "translateX(-50%)",
+                            width: 0,
+                            height: 0,
+                            borderLeft: `${20 * scale}px solid transparent`,
+                            borderRight: `${20 * scale}px solid transparent`,
+                            borderTop: `${40 * scale}px solid red`,
+                            zIndex: 10
+                        }}
+                    />
+                </div>
             </div>
-        <Button variant="primary" onClick={spin} disabled={spinning}>
-        {spinning
-            ? "Spinning..."
-            : "Spin"}
-        </Button>
 
-        </div>
+            <div className="random-panel-pane">
+                {children}
+                <Button variant="primary" onClick={spin} disabled={spinning}>
+                    {spinning ? "Spinning..." : "Spin"}
+                </Button>
+            </div>
+        </>
     );
 }
 
