@@ -6,6 +6,7 @@ import TestAxios from "../pages/testAxios";
 import Home from "../pages/home/Home";
 import Login from "../pages/login/Login";
 import Random from "../pages/random/Random";
+import LuckyWheelPage from "../pages/random/LuckyWheelPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UserContext } from "../context/UserContext";
 import { useState } from "react";
@@ -21,7 +22,7 @@ function AppRouter() {
             <Route path='/context' element={<TestContext />}/>
             <Route path='/axios' element={<TestAxios />}/>
             <Route path='/login' element={<Login/>}/>
-            <Route path='/random' element={<Random/>}/>
+            <Route path='/random' element={<LuckyWheelPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
