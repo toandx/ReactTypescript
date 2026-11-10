@@ -22,15 +22,20 @@ const NavBar = () => {
               <NavDropdown.Item href="/d3">
                 D3
               </NavDropdown.Item>
-              <NavDropdown.Item href="/random">
-                Random
-              </NavDropdown.Item>
               <NavDropdown.Item href="/axios">
                 Axios
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/context">
                 Context
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Game">
+              <NavDropdown.Item href="/random">
+                Lucky Wheel
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/race">
+                Duck Race
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
