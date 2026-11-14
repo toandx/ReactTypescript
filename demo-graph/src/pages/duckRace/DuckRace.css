@@ -8,6 +8,8 @@
 .race-board {
   flex: 1 1 auto;
   min-width: 0;
+  height: calc(100vh - 102px);
+  min-height: 360px;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
@@ -19,6 +21,7 @@
 .race-sky { height: 0; }
 .race-lanes {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 12px 0;
@@ -26,7 +29,7 @@
 }
 .lane {
   flex: 1 1 0;
-  min-height: clamp(70px, 12vw, 120px);
+  min-height: 0;
   display: flex;
   align-items: center;
   position: relative;
@@ -46,8 +49,6 @@
   white-space: nowrap;
 }
 .lane-water {
-  --dw: clamp(60px, 11vw, 110px);
-  --lw: clamp(60px, 11vw, 120px);
   position: relative;
   flex: 1 1 auto;
   height: 100%;
@@ -67,21 +68,102 @@
   width: var(--lw);
   box-sizing: border-box;
   margin-right: 4px;
-  padding: 2px 8px;
+  padding: 1px 6px;
   background: rgba(255, 255, 255, 0.92);
-  border: 3px solid;
+  border: 2px solid;
   border-radius: 999px;
   color: #222;
   font-weight: 700;
-  font-size: clamp(11px, 1.6vw, 16px);
+  font-size: var(--fs, 14px);
+  line-height: 1.2;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
+.duck-body {
+  position: relative;
+  flex: 0 0 var(--dw);
+  width: var(--dw);
+  height: var(--dw);
+  display: block;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.25s ease-out;
+}
 .duck-wrap.swimming .duck-svg { animation: bob 0.4s ease-in-out infinite alternate; }
-.duck-svg { flex: 0 0 var(--dw); width: var(--dw); height: var(--dw); filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.3)); }
+.duck-wrap.fast .duck-svg { animation-duration: 0.18s; }
+.duck-wrap.stalled .duck-svg { animation-duration: 1.4s; }
+.duck-wrap.reverse .duck-svg { animation: wobble 0.25s ease-in-out infinite alternate; }
+.duck-svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.3)); }
+
+/* wake trail: speed lines behind a fast duck, foam in front of a duck dragged backwards */
+.wake {
+  position: absolute;
+  top: 58%;
+  right: 92%;
+  width: 0;
+  height: 30%;
+  pointer-events: none;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.85) 0 18%,
+    transparent 18% 40%
+  );
+  mask: linear-gradient(90deg, transparent, #000);
+  -webkit-mask: linear-gradient(90deg, transparent, #000);
+  transition: width 0.2s ease-out, opacity 0.2s ease-out;
+}
+.duck-wrap.fast .wake { width: calc(var(--dw) * 1.1); opacity: 1; animation: streak 0.2s linear infinite; }
+.duck-wrap.reverse .wake {
+  right: auto;
+  left: 70%;
+  width: calc(var(--dw) * 0.6);
+  opacity: 1;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 30%, transparent 32%) 0 0 / 25% 100%;
+  mask: none;
+  -webkit-mask: none;
+  animation: foam 0.3s ease-in-out infinite alternate;
+}
+
+/* event banner */
+.race-event {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: calc(100% - 32px);
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2a3a;
+  font-weight: 800;
+  font-size: clamp(13px, 1.8vw, 18px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  border: 3px solid #ffc107;
+  animation: eventIn 0.45s cubic-bezier(0.2, 1.6, 0.4, 1), eventOut 0.4s ease-in 1.8s forwards;
+  pointer-events: none;
+}
+.race-event--turbo { border-color: #ffb400; background: #fff6d6; }
+.race-event--comeback { border-color: #ff6b35; background: #ffe9df; }
+.race-event--current,
+.race-event--wave { border-color: #1b7fc0; background: #e0f3ff; color: #0b4f7d; }
+.race-event--stall { border-color: #9e9e9e; background: #f3f3f3; }
+.race-event--shuffle { border-color: #9775fa; background: #f1ebff; }
+
+@keyframes eventIn { from { transform: translate(-50%, -30px) scale(0.6); opacity: 0; } }
+@keyframes eventOut { to { transform: translate(-50%, -20px); opacity: 0; } }
+@keyframes streak { from { background-position: 0 0; } to { background-position: -12px 0; } }
+@keyframes foam { from { transform: translateY(-2px) scaleX(0.9); } to { transform: translateY(2px) scaleX(1.1); } }
+@keyframes wobble {
+  from { transform: translateY(-2px) rotate(-9deg); }
+  to { transform: translateY(2px) rotate(9deg); }
+}
 .finish-line {
   position: absolute;
   right: 0;
@@ -107,8 +189,7 @@
 @media (max-width: 768px) {
   .race-page { flex-direction: column; min-height: 0; padding: 8px; }
   .race-panel { flex: none; width: 100%; align-self: stretch; }
-  .race-board { min-height: 300px; }
-  .lane { min-height: 72px; }
+  .race-board { height: 60vh; min-height: 320px; }
 }
 
 /* winner popup */
