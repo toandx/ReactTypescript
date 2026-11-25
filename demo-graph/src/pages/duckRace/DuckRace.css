@@ -56,7 +56,7 @@
 }
 .duck-wrap {
   position: absolute;
-  top: 50%;
+  top: calc(50% + var(--dy, 0px));
   display: flex;
   align-items: center;
   width: calc(var(--dw) + var(--lw));
@@ -164,14 +164,35 @@
   from { transform: translateY(-2px) rotate(-9deg); }
   to { transform: translateY(2px) rotate(9deg); }
 }
-.finish-line {
+.finish-line,
+.start-line {
   position: absolute;
-  right: 0;
   top: 0;
   bottom: 0;
   width: 10px;
+  pointer-events: none;
+}
+/* line positions follow the camera: --fp / --sp are screen % of the duck travel range */
+.finish-line {
+  left: calc((100% - var(--dw) - var(--lw)) * var(--fp) / 100 + var(--dw) + var(--lw));
+  transform: translateX(-100%);
   background: repeating-conic-gradient(#fff 0 25%, #222 0 50%) 0 0 / 10px 10px;
 }
+.start-line {
+  left: calc((100% - var(--dw) - var(--lw)) * var(--sp) / 100 + var(--lw));
+  width: 4px;
+  background: repeating-linear-gradient(#fff 0 8px, transparent 8px 14px);
+  opacity: 0.8;
+}
+/* scenery: layers scroll at different speeds (parallax) as the camera moves */
+.scn { position: absolute; left: 0; right: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.scn-sky { top: 0; height: 12%; }
+.scn-water { top: 12%; bottom: 0; }
+.scn-bank { bottom: 0; height: 30px; }
+.scn-layer { position: absolute; top: 0; bottom: 0; left: 0; will-change: transform; }
+.scn-item { position: absolute; line-height: 1; white-space: nowrap; }
+.scn-sky .scn-item { transform: translateY(-20%); }
+.race-lanes { z-index: 1; }
 @keyframes bob {
   from { transform: translateY(-3px) rotate(-4deg); }
   to { transform: translateY(3px) rotate(4deg); }

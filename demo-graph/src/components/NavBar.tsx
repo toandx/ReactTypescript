@@ -35,7 +35,7 @@ const NavBar = () => {
                 Lucky Wheel
               </NavDropdown.Item>
               <NavDropdown.Item href="/race">
-                Duck Race
+                Sea Race
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
